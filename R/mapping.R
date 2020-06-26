@@ -32,7 +32,7 @@ mapdata <- function(map, exp,codename, namename, pf){
     map
 }
 
-exmap <- function(mapdata, grobs=0){
+exmap <- function(mapdata, grobs=0, imagefolder){
 #    stopifnot(all(mapdata$code == names(grobs)))
     overs = which(mapdata$exceed1 > 0.9)
     unders = which(mapdata$below1 > 0.9)
@@ -61,19 +61,32 @@ exmap <- function(mapdata, grobs=0){
 
     labs = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
-        htmltools::HTML(paste0("<b>",md$name,"</b><br/>R<sub>t</sub> median estimate : ",sprintf(fmt="%04.3f", md$med)))
+        htmltools::HTML(paste0("<b>",md$name,"</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med)))
         })
+
+    ims = lapply(1:nrow(mapdata), function(im){
+        md = mapdata[im,]
+        ip = file.path(imagefolder, paste0(md$code,".png"))
+        htmltools::HTML(paste0('<a href="/"><img src="',ip,'"></a>'))
+        })
+    
+    imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))
     
     leaflet() %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addAwesomeMarkers(data=mappts[unders,], group="unders", icon=undericons, label=paste0(mappts$name[unders]," : Decreasing")) %>%
         addAwesomeMarkers(data=mappts[overs,], group="overs",icon=overicons, label=paste0(mappts$name[overs]," : Increasing")) %>%
-        #addPopupGraphs(overgrobs, group="overs", width=400, height=300) %>%
+        ##addPopupGraphs(overgrobs, group="overs", width=400, height=300) %>%
         addPolygons(data=mapdata, group="map", fillColor=~pal(med), fillOpacity=0.75, color="#404040", weight=1, opacity=1,
-                    label=labs) %>%
-        #addPopupGraphs(grobs, group="map", width=400,height=300) %>% 
+                    label=labs,
+                    popup=ims,
+                    popupOptions=list(minWidth=350, maxWidth=350)) %>%
+        
+        ##addPopupGraphs(grobs, group="map", width=400,height=300) %>%
+        ##addPopupImages(imagepaths, group="map") %>%
+        
         addLegend(data=mapdata, "topright", pal = pal, values = ~med,
-                  title = "Median R<sub>t</sub>",
+                  title = "Case count",
                   opacity = 1)
     
 }

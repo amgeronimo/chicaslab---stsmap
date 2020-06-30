@@ -5,5 +5,6 @@ epg = read.csv("./stsmodel/output/ex_prob_gr.csv")
 ltla = st_read("./stsmodel/output/data/processed/geodata/ltla.gpkg")
 md = mapdata(ltla, epg, "lad19cd","lad19nm", pf)
 
-saveWidget(exmap(md,imagefolder=file.path(getwd(),"./stsmodel/output/time_series/")),"/tmp/st.html")
+map = exmap(md,imagefolder=file.path(getwd(),"./stsmodel/output/time_series/"))
+saveWidget(map, "/tmp/st.html")
 

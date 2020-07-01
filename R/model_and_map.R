@@ -54,15 +54,17 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
     analysis04(outputdir)
 
     message("making map")
+    
+    make_od_map(outputdir)
 
+}
+    
+make_od_map <- function(outputdir){
+    od = ipf(normalizePath(outputdir))
     pf = read.csv(od("pred_forecast.csv"))
     epg = read.csv(od("ex_prob_gr.csv"))
     ltla = st_read(od("data/processed/geodata/ltla.gpkg"))
     md = mapdata(ltla, epg, "lad19cd","lad19nm", pf)
-    
     map = exmap(md,imagefolder="time_series/")
     saveWidget(map, od("st.html"))
-
-
 }
-    

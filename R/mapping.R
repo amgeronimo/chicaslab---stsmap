@@ -67,7 +67,7 @@ exmap <- function(mapdata, grobs=0, imagefolder){
     ims = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
         ip = file.path(imagefolder, paste0(md$code,".png"))
-        htmltools::HTML(paste0('<a href="/"><img src="',ip,'"></a>'))
+        htmltools::HTML(paste0('<a href="',ip,'"><img src="',ip,'"></a>'))
         })
     
     imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))

@@ -32,7 +32,7 @@ mapdata <- function(map, exp,codename, namename, pf){
     map
 }
 
-exmap <- function(mapdata, grobs=0, imagefolder){
+exmap <- function(mapdata, grobs=0, imagefolder, plotfolder){
 #    stopifnot(all(mapdata$code == names(grobs)))
     overs = which(mapdata$exceed1 > 0.9)
     unders = which(mapdata$below1 > 0.9)
@@ -67,7 +67,8 @@ exmap <- function(mapdata, grobs=0, imagefolder){
     ims = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
         ip = file.path(imagefolder, paste0(md$code,".png"))
-        htmltools::HTML(paste0('<a href="',ip,'"><img src="',ip,'"></a>'))
+        fp = file.path(plotfolder, paste0(md$code,".html"))
+        htmltools::HTML(paste0('<a href="',ip,'"><img src="',ip,'"></a></b><a href="',fp,'">Plot</a>'))
         })
     
     imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))

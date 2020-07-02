@@ -72,23 +72,40 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder){
         })
     
     imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))
+
+    tag.map.title <- tags$style(HTML("
+  .leaflet-control.map-title { 
+    transform: translate(-50%,20%);
+    xxxposition: fixed !important;
+    left: 50%;
+    xxtext-align: center;
+    padding-left: 10px; 
+    padding-right: 10px;
+margin-bottom: 4em;
+    background: rgba(255,255,255,0.75);
+    xxxfont-weight: bold;
+width: 10em;
+    font-size: 1.5em;
+  }
+"))
+    
+    title <- tags$div(
+                      tag.map.title, HTML("<p>Case counts, markers show significant increasing and decreasing LTLAs</p>")
+                  )  
     
     leaflet() %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addAwesomeMarkers(data=mappts[unders,], group="unders", icon=undericons, label=paste0(mappts$name[unders]," : Decreasing")) %>%
         addAwesomeMarkers(data=mappts[overs,], group="overs",icon=overicons, label=paste0(mappts$name[overs]," : Increasing")) %>%
-        ##addPopupGraphs(overgrobs, group="overs", width=400, height=300) %>%
         addPolygons(data=mapdata, group="map", fillColor=~pal(med), fillOpacity=0.75, color="#404040", weight=1, opacity=1,
                     label=labs,
                     popup=ims,
                     popupOptions=list(minWidth=350, maxWidth=350)) %>%
         
-        ##addPopupGraphs(grobs, group="map", width=400,height=300) %>%
-        ##addPopupImages(imagepaths, group="map") %>%
-        
         addLegend(data=mapdata, "topright", pal = pal, values = ~med,
                   title = "Case count",
-                  opacity = 1)
+                  opacity = 1) %>%
+        addControl(title, position = "bottomleft", className="map-title")
     
 }
 

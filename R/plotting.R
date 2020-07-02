@@ -42,7 +42,10 @@ make_ggplot <- function(ltla_pred, ltla_forecast){
 make_plotly <- function(pred, fore){
 
     xaxis = list(title="Date")
-    yaxis = list(title="Case Count")
+    yaxis = list(title="Count")
+
+    ## make the first prediction join up with the last data:
+    fore = rbind(pred[nrow(pred),], fore)
     
     fig = plot_ly(pred, x=~time)
 
@@ -59,7 +62,7 @@ make_plotly <- function(pred, fore){
                                line=list(color="transparent"),fillcolor='rgba(24,116,205,.2)',
                                showlegend=FALSE, name="50% CI") # name doesn't show
 
-    fig  <- fig %>% add_trace(x=~time, y=~mean, data=fore,
+    fig <- fig %>% add_trace(x=~time, y=~mean, data=fore,
                               line=list(color="red"),
                               type="scatter", mode="lines", name="Forecast")
     fig <- fig %>% add_ribbons(ymin=~low95, ymax=~up95,
@@ -68,7 +71,9 @@ make_plotly <- function(pred, fore){
     fig <- fig %>% add_ribbons(ymin=~low50, ymax=~up50,
                                line=list(color="transparent"),fillcolor='rgba(255,165,0,.2)',
                                showlegend=FALSE, name="50% CI") # name doesn't show
-    
+
+    fig <- fig %>% add_trace(data=pred, y=~observed, x=~time, type="scatter", mode="lines",
+                             line=list(color="black", dash="dash"), name="Cases")
 
     fig <- fig %>% layout(xaxis=xaxis, yaxis=yaxis, showlegend=TRUE, title=pred$lad19nm[1])
     return(fig)

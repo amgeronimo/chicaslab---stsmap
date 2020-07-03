@@ -32,15 +32,18 @@ mapdata <- function(map, exp,codename, namename, pf){
     map
 }
 
-exmap <- function(mapdata, grobs=0, imagefolder, plotfolder){
+exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
 #    stopifnot(all(mapdata$code == names(grobs)))
-    overs = which(mapdata$exceed1 > 0.9)
-    unders = which(mapdata$below1 > 0.9)
+    overs = which(mapdata$exceed1)
+    unders = which(mapdata$below1)
 
 #    overgrobs = grobs[overs]
 #    undergrobs = grobs[unders]
-    
+
+    w = options()$warn
+    options(warn=-1) # prevent CRS warnings
     mappts = st_point_on_surface(mapdata)
+    options(warn=w)
 
     undericons <- awesomeIcons(
         icon = 'arrow-graph-down-right',
@@ -61,6 +64,12 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder){
 
     labs = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
+        if(im %in% overs){
+            return(htmltools::HTML(paste0("<b>",md$name," : increasing</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med))))
+        }
+        if(im %in% unders){
+            return(htmltools::HTML(paste0("<b>",md$name," : decreasing</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med))))
+        }
         htmltools::HTML(paste0("<b>",md$name,"</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med)))
         })
 
@@ -88,25 +97,51 @@ width: 10em;
     font-size: 1.5em;
   }
 "))
-    
+ 
+    last_day = as.Date(last_day)
+    niceday = nicedayformat(last_day)
+    text = paste0("<p>Case counts, markers show significant increasing and decreasing areas.</p><p>Last data report: ", niceday,"</p>")
     title <- tags$div(
-                      tag.map.title, HTML("<p>Case counts, markers show significant increasing and decreasing LTLAs</p>")
+                      tag.map.title, HTML(text)
                   )  
-    
-    leaflet() %>%
-        addProviderTiles("Esri.WorldGrayCanvas") %>%
-        addAwesomeMarkers(data=mappts[unders,], group="unders", icon=undericons, label=paste0(mappts$name[unders]," : Decreasing")) %>%
-        addAwesomeMarkers(data=mappts[overs,], group="overs",icon=overicons, label=paste0(mappts$name[overs]," : Increasing")) %>%
-        addPolygons(data=mapdata, group="map", fillColor=~pal(med), fillOpacity=0.75, color="#404040", weight=1, opacity=1,
+    popopts = list(minWidth=350, maxWidth=350)
+    M = leaflet() %>%
+        addProviderTiles("Esri.WorldGrayCanvas")
+    if(length(unders)>0){
+        M = M %>% addAwesomeMarkers(data=mappts[unders,],
+                                    group="unders", icon=undericons,
+                                    label=labs[unders],
+                                    popup=ims[unders], popupOptions=popopts
+                                    )
+    }
+    if(length(overs)>0){
+        M = M %>% addAwesomeMarkers(data=mappts[overs,], group="overs",icon=overicons, label=labs[overs],
+                                    popup=ims[overs], popupOptions=popopts)
+    }
+    M = M %>%  addPolygons(data=mapdata, group="map", fillColor=~pal(med), fillOpacity=0.75, color="#404040", weight=1, opacity=1,
                     label=labs,
                     popup=ims,
-                    popupOptions=list(minWidth=350, maxWidth=350)) %>%
+                    popupOptions=popopts) %>%
         
         addLegend(data=mapdata, "topright", pal = pal, values = ~med,
                   title = "Case count",
                   opacity = 1) %>%
         addControl(title, position = "bottomleft", className="map-title")
-    
+    return(M)
 }
 
 
+suffice = function(n){
+    n = as.character(n)
+    suff=list("1"="st", "21"="st", "31"="st", "2"="nd", "22"="nd", "3"="rd", "23"="rd")
+    if(n %in% names(suff)){
+        return(paste0(n,suff[n]))
+    }else{
+        return(paste0(n,"th") )
+    }
+}
+
+nicedayformat <- function(d){
+    d = as.Date(d)
+    format(last_day,paste0("%A, %B ",suffice(format(d,"%-d"))," %Y"))
+}

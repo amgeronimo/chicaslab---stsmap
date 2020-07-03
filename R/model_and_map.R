@@ -1,6 +1,7 @@
 model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv",
                           modeldir,
-                          outputdir){
+                          outputdir,
+                          useDate=FALSE){
     casename = "coronavirus-cases_latest.csv"
     here = getwd()
     on.exit(setwd(here))
@@ -11,12 +12,21 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
             file.path(dir,p)
         }
     }
+
+    
+    newdata = file.path(tempdir(), "cv.csv")
+    download.file(cases, newdata)
+    message("Downloaded to ",newdata)
+
+    casedata = read.csv(newdata, stringsAsFactors=FALSE)
+    last_day = max(as.Date(casedata$Specimen.date))
+    if(useDate){
+        outputdir=file.path(outputdir, as.character(last_day))
+    }
     od = ip(outputdir)
     if(file.exists(outputdir)){
-        newdata = file.path(tempdir(), "cv.csv")
-        download.file(cases, newdata)
-        message("Downloaded to ",newdata)
         if(file.exists(od(casename))){
+            ## see if we already have this identical file
             message("Testing checksums")
             if(tools::md5sum(newdata) == tools::md5sum(od(casename))){
                 stop("No change in input data case file ",cases)
@@ -27,11 +37,13 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
             message("copying to ",od(casename))
             file.copy(newdata,od(casename))
         }else{
+            ## if the csv doesn't exist, copy it
             file.copy(newdata,od(casename))
         }
     }else{
+        ## if the dir doesn't exist, create it.
         dir.create(outputdir)
-        download.file(cases, file.path(outputdir,casename))
+        file.copy(newdata,od(casename))
     }
 
     outputdir = normalizePath(outputdir)
@@ -55,22 +67,23 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
 
     message("making map")
     
-    make_od_map(outputdir)
-    build_plots(outputdir)
+    make_od_map(outputdir, last_day)
+    build_plots(outputdir, last_day)
     clean_up(outputdir)
 }
     
-make_od_map <- function(outputdir){
+make_od_map <- function(outputdir, last_day){
     od = ipf(normalizePath(outputdir))
     pf = read.csv(od("pred_forecast.csv"))
     epg = read.csv(od("ex_prob_gr.csv"))
     ltla = st_read(od("data/processed/geodata/ltla.gpkg"))
     md = mapdata(ltla, epg, "lad19cd","lad19nm", pf)
-    map = exmap(md,imagefolder="time_series/", plotfolder="figs/")
-    htmlwidgets::saveWidget(map, od("index.html"))
+    map = exmap(md,imagefolder="time_series/", plotfolder="figs/", last_day=last_day)
+    title = paste0("Covid-19 Cases and Model by LTLA, last data: ",niceformat(last_day))
+    htmlwidgets::saveWidget(map, od("index.html"), title=title)
 }
 
-build_plots <- function(outputdir){
+build_plots <- function(outputdir, last_day){
     od = ipf(normalizePath(outputdir))
     pf = read.csv(od("pred_forecast.csv"))
     if(!file.exists(file.path(outputdir,"figs"))){

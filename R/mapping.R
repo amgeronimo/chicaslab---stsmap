@@ -77,7 +77,7 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
         md = mapdata[im,]
         ip = file.path(imagefolder, paste0(md$code,".png"))
         fp = file.path(plotfolder, paste0(md$code,".html"))
-        htmltools::HTML(paste0('<a href="',ip,'"><img src="',ip,'"></a></b><a href="',fp,'">Plot</a>'))
+        htmltools::HTML(paste0('<a href="',ip,'"><img src="',ip,'"></a></b><a href="',fp,'">Interactive Plot</a>'))
         })
     
     imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))
@@ -143,5 +143,5 @@ suffice = function(n){
 
 nicedayformat <- function(d){
     d = as.Date(d)
-    format(last_day,paste0("%A, %B ",suffice(format(d,"%-d"))," %Y"))
+    format(d,paste0("%A, %B ",suffice(format(d,"%-d"))," %Y"))
 }

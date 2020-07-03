@@ -79,7 +79,7 @@ make_od_map <- function(outputdir, last_day){
     ltla = st_read(od("data/processed/geodata/ltla.gpkg"))
     md = mapdata(ltla, epg, "lad19cd","lad19nm", pf)
     map = exmap(md,imagefolder="time_series/", plotfolder="figs/", last_day=last_day)
-    title = paste0("Covid-19 Cases and Model by LTLA, last data: ",niceformat(last_day))
+    title = paste0("Covid-19 Cases and Model by LTLA, last data: ",nicedayformat(last_day))
     htmlwidgets::saveWidget(map, od("index.html"), title=title)
 }
 

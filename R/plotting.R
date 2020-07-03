@@ -50,30 +50,45 @@ make_plotly <- function(pred, fore){
     fig = plot_ly(pred, x=~time)
 
 
+
+    fig <- fig %>% add_ribbons(ymin=~low95, ymax=~up95,
+                               legendgroup="Model",
+                               visible="legendonly",
+                               line=list(color="transparent"),fillcolor='rgb(208,227,245)',
+                               showlegend=TRUE, name="95% CI") # name doesn't show
+    fig <- fig %>% add_ribbons(ymin=~low50, ymax=~up50,
+                               legendgroup="Model",
+                               visible="legendonly",
+                               line=list(color="transparent"),fillcolor='rgb(171,205,237)',
+                               showlegend=TRUE, name="50% CI") # name doesn't show
     fig  <- fig %>% add_trace(y=~mean, type="scatter",mode="lines",
+                              legendgroup="Model",
+                              visible="legendonly",
                               line=list(color="black"),
                               showlegend=TRUE,
                                fillcolor='rgba(100,100,80,.2)', name="Mean")
 
-    fig <- fig %>% add_ribbons(ymin=~low95, ymax=~up95,
-                               line=list(color="transparent"),fillcolor='rgba(24,116,205,.2)',
-                               showlegend=FALSE, name="95% CI") # name doesn't show
+
+    fig <- fig %>% add_ribbons(data=fore,
+                               ymin=~low95, ymax=~up95,
+                               legendgroup="Forecast",
+                               line=list(color="transparent"),fillcolor='rgb(255,237,204)',
+                               showlegend=TRUE, name="95% CI") # name doesn't show
     fig <- fig %>% add_ribbons(ymin=~low50, ymax=~up50,
-                               line=list(color="transparent"),fillcolor='rgba(24,116,205,.2)',
-                               showlegend=FALSE, name="50% CI") # name doesn't show
+                               legendgroup="Forecast",
+                               line=list(color="transparent"),fillcolor='rgb(255,201,102)',
+                               showlegend=TRUE, name="50% CI") # name doesn't show
 
     fig <- fig %>% add_trace(x=~time, y=~mean, data=fore,
+                             legendgroup="Forecast",
                               line=list(color="red"),
                               type="scatter", mode="lines", name="Forecast")
-    fig <- fig %>% add_ribbons(ymin=~low95, ymax=~up95,
-                               line=list(color="transparent"),fillcolor='rgba(255,165,0,.2)',
-                               showlegend=FALSE, name="95% CI") # name doesn't show
-    fig <- fig %>% add_ribbons(ymin=~low50, ymax=~up50,
-                               line=list(color="transparent"),fillcolor='rgba(255,165,0,.2)',
-                               showlegend=FALSE, name="50% CI") # name doesn't show
-
-    fig <- fig %>% add_trace(data=pred, y=~observed, x=~time, type="scatter", mode="lines",
-                             line=list(color="black", dash="dash"), name="Cases")
+    
+    fig <- fig %>% add_markers(data=pred, y=~observed, x=~time,
+                               marker=list(color="red",  symbol="cross",
+                                           line=list(width=1, color="white")
+                                           ),
+                               name="Cases")
 
     fig <- fig %>% layout(xaxis=xaxis, yaxis=yaxis, showlegend=TRUE, title=pred$lad19nm[1])
     return(fig)

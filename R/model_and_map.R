@@ -2,7 +2,8 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
                           modeldir,
                           outputdir,
                           useDate=FALSE,
-                          force=FALSE){
+                          force=FALSE,
+                          clean=TRUE){
     casename = "coronavirus-cases_latest.csv"
     here = getwd()
     on.exit(setwd(here))
@@ -70,7 +71,9 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
     
     make_od_map(outputdir, last_day)
     build_plots(outputdir, last_day)
-    clean_up(outputdir)
+    if(clean){
+        clean_up(outputdir)
+    }
 }
     
 make_od_map <- function(outputdir, last_day){

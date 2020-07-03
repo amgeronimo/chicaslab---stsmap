@@ -3,6 +3,7 @@ image: alpine:latest
 pages:
   stage: deploy
   script:
+  - mkdir public
   - ./update_days.sh
   artifacts:
     paths:

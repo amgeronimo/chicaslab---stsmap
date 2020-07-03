@@ -1,7 +1,8 @@
 model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv",
                           modeldir,
                           outputdir,
-                          useDate=FALSE){
+                          useDate=FALSE,
+                          force=FALSE){
     casename = "coronavirus-cases_latest.csv"
     here = getwd()
     on.exit(setwd(here))
@@ -28,7 +29,7 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
         if(file.exists(od(casename))){
             ## see if we already have this identical file
             message("Testing checksums")
-            if(tools::md5sum(newdata) == tools::md5sum(od(casename))){
+            if(!force & (tools::md5sum(newdata) == tools::md5sum(od(casename)))){
                 stop("No change in input data case file ",cases)
             }
             message("remove old folder ",outputdir," and recreate...")

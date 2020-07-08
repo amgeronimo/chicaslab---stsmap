@@ -12,4 +12,10 @@ License: GPL (>= 2)
 Imports:
   plotly,
   leaflet,
-  htmltools
+  htmltools,
+  sf,
+  surveillance,
+  dplyr,
+  ggplot2
+  
+  

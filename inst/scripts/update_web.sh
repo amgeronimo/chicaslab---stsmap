@@ -16,5 +16,7 @@ fi
 (cd stsmodel; git pull)
 
 ## run the daily update script in this docker container
-#docker run -v $PWD/:/app/Covid -i -t stsmodel ./stsmap/inst/scripts/update_model.sh
+docker run -v $PWD/:/app/ -i -t stsmodel ./stsmap/inst/scripts/update_model.sh
 
+# now see if ./stsmodel/inst/days has changed, push if it has.
+#...

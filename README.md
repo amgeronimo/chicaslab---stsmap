@@ -1,67 +1,28 @@
-![Build Status](https://gitlab.com/pages/plain-html/badges/master/build.svg)
+# stsmap repository
 
----
+This repository generates the public map from the sts model. The `stsmodel` repository contains the 
+model code itself.
 
-Example plain HTML site using GitLab Pages.
+## Usage
 
-Learn more about GitLab Pages at https://pages.gitlab.io and the official
-documentation https://docs.gitlab.com/ce/user/project/pages/.
-
----
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [GitLab CI](#gitlab-ci)
-- [GitLab User or Group Pages](#gitlab-user-or-group-pages)
-- [Did you fork this project?](#did-you-fork-this-project)
-- [Troubleshooting](#troubleshooting)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## GitLab CI
-
-This project's static Pages are built by [GitLab CI][ci], following the steps
-defined in [`.gitlab-ci.yml`](.gitlab-ci.yml):
+With both `stsmodel` and `stsmap` attached as packages:
 
 ```
-image: alpine:latest
-
-pages:
-  stage: deploy
-  script:
-  - echo 'Nothing to do...'
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+R> area_gpkg ="path/to/UK2019mod_pop.gpkg"
+R> linelist = "path/to/Anonymised Combined Line List 20200713.xlsx"
+R> trafficdata = "path/to/200616_COVID19_road_traffic_national_table.xlsx"
+R> flow = "path/to/mergedflows.rds"
+R> alldata = read_all(cases=linelist, flows=flow, traffic=trafficdata, areas=area_gpkg)
+R> model_and_map(alldata, "./Outputs/", useDate=TRUE)
 ```
 
-The above example expects to put all your HTML files in the `public/` directory.
+will run `launch()` from `stsmodel` to fit the model based on the data in `alldata`, and then
+use code in `stsmap` to build maps and plots in a subdirectory of `./Outputs/` named after
+the last day in the line list data.
 
-## GitLab User or Group Pages
+That folder can be viewed directly in a web browser using a `file:///` URL.
 
-To use this project as your user/group website, you will need one additional
-step: just rename your project to `namespace.gitlab.io`, where `namespace` is
-your `username` or `groupname`. This can be done by navigating to your
-project's **Settings**.
+In "production" mode, the output folder will be in `stsmap/inst/days/` and pushed to `gitlab.com`. That 
+triggers a CI job which copies the latest day in that folder to `./public` to create the web page. To 
+view historical outputs, clone this repository and view the folders directly in the `stsmap/inst/days`.
 
-Read more about [user/group Pages][userpages] and [project Pages][projpages].
-
-## Did you fork this project?
-
-If you forked this project for your own use, please go to your project's
-**Settings** and remove the forking relationship, which won't be necessary
-unless you want to contribute back to the upstream project.
-
-## Troubleshooting
-
-1. CSS is missing! That means that you have wrongly set up the CSS URL in your
-   HTML files. Have a look at the [index.html] for an example.
-
-[ci]: https://about.gitlab.com/gitlab-ci/
-[index.html]: https://gitlab.com/pages/plain-html/blob/master/public/index.html
-[userpages]: https://docs.gitlab.com/ce/user/project/pages/introduction.html#user-or-group-pages
-[projpages]: https://docs.gitlab.com/ce/user/project/pages/introduction.html#project-pages

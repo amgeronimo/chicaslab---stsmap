@@ -65,12 +65,12 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
     labs = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
         if(im %in% overs){
-            return(htmltools::HTML(paste0("<b>",md$name," : increasing</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med))))
+            return(htmltools::HTML(paste0("<b>",md$name," : increasing</b><br/>Case report median estimate : ",sprintf(fmt="%d", round(md$med)))))
         }
         if(im %in% unders){
-            return(htmltools::HTML(paste0("<b>",md$name," : decreasing</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med))))
+            return(htmltools::HTML(paste0("<b>",md$name," : decreasing</b><br/>Case report median estimate : ",sprintf(fmt="%d", round(md$med)))))
         }
-        htmltools::HTML(paste0("<b>",md$name,"</b><br/>Case report median estimate : ",sprintf(fmt="%04.3f", md$med)))
+        htmltools::HTML(paste0("<b>",md$name,"</b><br/>Case report median estimate : ",sprintf(fmt="%d", round(md$med))))
         })
 
     ims = lapply(1:nrow(mapdata), function(im){

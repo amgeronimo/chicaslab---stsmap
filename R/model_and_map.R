@@ -1,6 +1,4 @@
-model_and_map <- function(linelist,
-                          unrestricted,
-                          restricted,
+model_and_map <- function(alldata,
                           outputdir,
                           useDate=FALSE,
                           force=FALSE,
@@ -15,9 +13,7 @@ model_and_map <- function(linelist,
         }
     }
 
-    
-    casedata = stsmodel::read_casefile(linelist)
-    last_day = max(as.Date(casedata$specimen_date))
+    last_day = max(as.Date(alldata$cases$specimen_date))
     if(useDate){
         outputdir=file.path(outputdir, as.character(last_day))
     }
@@ -28,27 +24,30 @@ model_and_map <- function(linelist,
     }else{
     ## if the dir doesn't exist, create it.
         dir.create(outputdir)
-        ## TODO create md5 checksum for the data here
+        ## launch will store file metadata file here for checksums
     }
 
     outputdir = normalizePath(outputdir)
     od = ip(outputdir) # now the normalized path exists.
     message("output dir is ",outputdir)
 
-    stsmodel::launch(outputdir, linelist, unrestricted, restricted)
+    stsmodel::launch(outputdir, alldata)
 
     message("making map")
     
-    make_od_map(outputdir, last_day)
-    build_plots(outputdir, last_day)
+    make_od_map(outputdir)
+    build_plots(outputdir)
     if(clean){
         clean_up(outputdir)
     }
 }
     
-make_od_map <- function(outputdir, last_day){
+make_od_map <- function(outputdir){
     od = ipf(normalizePath(outputdir))
-    pf = read.csv(od("pred_forecast.csv"))
+    meta = readRDS(od("run_meta.rds"))
+    last_day = meta$last_day
+    fandp = fits_and_predicts(outputdir)
+    pf = fandp$fits
     epg = read.csv(od("ex_prob_gr.csv"))
     ltla = st_read(od("data/processed/geodata/ltla.gpkg"))
     md = mapdata(ltla, epg, "lad19cd","lad19nm", pf)
@@ -57,13 +56,17 @@ make_od_map <- function(outputdir, last_day){
     htmlwidgets::saveWidget(map, od("index.html"), title=title)
 }
 
-build_plots <- function(outputdir, last_day){
+build_plots <- function(outputdir){
     od = ipf(normalizePath(outputdir))
-    pf = read.csv(od("pred_forecast.csv"))
+
+    meta = readRDS(od("run_meta.rds"))
+    last_day = meta$last_day
+
+    fandp = fits_and_predicts(outputdir)
     if(!file.exists(file.path(outputdir,"figs"))){
         dir.create(file.path(outputdir,"figs"))
     }
-    save_plots(pf, file.path(outputdir,"figs"))
+    save_plots(fandp, file.path(outputdir,"figs"))
 }
 
 clean_up <- function(outputdir){

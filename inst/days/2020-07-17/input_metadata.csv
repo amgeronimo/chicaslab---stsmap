@@ -1,0 +1,5 @@
+"name","given","fullpath","mtime","md5"
+"cases","./Data/Restricted/PHE/PHE_2020-07-18/Anonymised Combined Line List 20200718.xlsx","/home/rowlings/Work/Chicas/Projects/Infectious/Covid19/Claudio/Data/Restricted/PHE/PHE_2020-07-18/Anonymised Combined Line List 20200718.xlsx",2020-07-20 10:37:40,"c590e41db3eb18b82d58e9fecf9c1487"
+"flows","./Data/Unrestricted/processed/mergedflows.rds","/home/rowlings/Work/Chicas/Projects/Infectious/Covid19/Claudio/Data/Unrestricted/processed/mergedflows.rds",2020-06-15 15:28:56,"2f34b018ac0995f8e9461f062a068004"
+"traffic","./Data/Restricted/Traffic/200616_COVID19_road_traffic_national_table.xlsx","/home/rowlings/Work/Chicas/Projects/Infectious/Covid19/Claudio/Data/Restricted/Traffic/200616_COVID19_road_traffic_national_table.xlsx",2020-07-13 16:08:43,"0491b7ac7d6fb9d515b73e1b08724404"
+"areas","./Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg","/home/rowlings/Work/Chicas/Projects/Infectious/Covid19/Claudio/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg",2020-06-22 09:51:34,"cf99fa0284c96852e73f588f6bb89110"

@@ -1,17 +1,19 @@
-save_plots <- function(preds, ddir){
+save_plots <- function(fandp, ddir){
     ddir = normalizePath(ddir)
-    for(code in unique(preds$lad19cd)){
-        fig = make_plot_for(preds, code)
+    for(code in unique(fandp$fits$lad19cd)){
+        fig = make_plot_for(fandp, code)
         save_html(fig,file.path(ddir,paste0(code,".html")))
     }
 }
 
-make_plot_for <- function(preds, code){
+make_plot_for <- function(fandp, code){
+    fits = fandp$fits
+    fits$time = as.Date(fits$time)
+    fits = fits[fits$lad19cd == code,]
+    preds = fandp$predicts
     preds$time = as.Date(preds$time)
-    pred = preds[preds$lad19cd == code,]
-    fore = pred[is.na(pred$observed),]
-    pred = pred[!is.na(pred$observed),]
-    make_plotly(pred, fore)
+    preds = preds[preds$lad19cd == code,]
+    make_plotly(fits, preds)
 }
 
 make_ggplot <- function(ltla_pred, ltla_forecast){
@@ -39,15 +41,15 @@ make_ggplot <- function(ltla_pred, ltla_forecast){
     coord_cartesian(expand = 0)
 }
 
-make_plotly <- function(pred, fore){
+make_plotly <- function(fits, preds){
 
     xaxis = list(title="Date")
     yaxis = list(title="Count")
 
     ## make the first prediction join up with the last data:
-    fore = rbind(pred[nrow(pred),], fore)
+    preds = rbind(fits[nrow(fits),], preds)
     
-    fig = plot_ly(pred, x=~time)
+    fig = plot_ly(fits, x=~time)
 
 
 
@@ -69,7 +71,7 @@ make_plotly <- function(pred, fore){
                                fillcolor='rgba(100,100,80,.2)', name="Mean")
 
 
-    fig <- fig %>% add_ribbons(data=fore,
+    fig <- fig %>% add_ribbons(data=preds,
                                ymin=~low95, ymax=~up95,
                                legendgroup="Forecast",
                                line=list(color="transparent"),fillcolor='rgb(255,237,204)',
@@ -79,18 +81,24 @@ make_plotly <- function(pred, fore){
                                line=list(color="transparent"),fillcolor='rgb(255,201,102)',
                                showlegend=TRUE, name="50% CI") # name doesn't show
 
-    fig <- fig %>% add_trace(x=~time, y=~mean, data=fore,
+    fig <- fig %>% add_trace(x=~time, y=~mean, data=preds,
                              legendgroup="Forecast",
                               line=list(color="red"),
                               type="scatter", mode="lines", name="Forecast")
+
+    fig <- fig %>% add_markers(x=~time, y=~observed, data=preds,
+                               legendgroup="New Data",
+                               marker = list(color="red", symbol="cross",
+                                             line=list(color="white", width=1)),
+                               name="New Data")
     
-    fig <- fig %>% add_markers(data=pred, y=~observed, x=~time,
-                               marker=list(color="red",  symbol="cross",
+    fig <- fig %>% add_markers(data=fits, y=~observed, x=~time,
+                               marker=list(color="grey",  symbol="circle",
                                            line=list(width=1, color="white")
                                            ),
                                name="Cases")
 
-    fig <- fig %>% layout(xaxis=xaxis, yaxis=yaxis, showlegend=TRUE, title=pred$lad19nm[1])
+    fig <- fig %>% layout(xaxis=xaxis, yaxis=yaxis, showlegend=TRUE, title=preds$lad19nm[1])
     return(fig)
     
 }

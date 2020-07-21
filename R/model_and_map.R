@@ -1,13 +1,13 @@
-model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv",
-                          modeldir,
+model_and_map <- function(linelist,
+                          unrestricted,
+                          restricted,
                           outputdir,
                           useDate=FALSE,
                           force=FALSE,
                           clean=TRUE){
-    casename = "coronavirus-cases_latest.csv"
+
     here = getwd()
     on.exit(setwd(here))
-    modeldir = normalizePath(modeldir)
 
     ip = function(dir){
         function(p){
@@ -16,56 +16,26 @@ model_and_map <- function(cases="https://coronavirus.data.gov.uk/downloads/csv/c
     }
 
     
-    newdata = file.path(tempdir(), "cv.csv")
-    download.file(cases, newdata)
-    message("Downloaded to ",newdata)
-
-    casedata = read.csv(newdata, stringsAsFactors=FALSE)
-    last_day = max(as.Date(casedata$Specimen.date))
+    casedata = stsmodel::read_casefile(linelist)
+    last_day = max(as.Date(casedata$specimen_date))
     if(useDate){
         outputdir=file.path(outputdir, as.character(last_day))
     }
     od = ip(outputdir)
     if(file.exists(outputdir)){
-        if(file.exists(od(casename))){
-            ## see if we already have this identical file
-            message("Testing checksums")
-            if(!force & (tools::md5sum(newdata) == tools::md5sum(od(casename)))){
-                stop("No change in input data case file ",cases)
-            }
-            message("remove old folder ",outputdir," and recreate...")
-            unlink(outputdir,recursive=TRUE)
-            dir.create(outputdir)
-            message("copying to ",od(casename))
-            file.copy(newdata,od(casename))
-        }else{
-            ## if the csv doesn't exist, copy it
-            file.copy(newdata,od(casename))
-        }
+        message("Testing checksums skipped for now.")
+        ## TODO check checkums here
     }else{
-        ## if the dir doesn't exist, create it.
+    ## if the dir doesn't exist, create it.
         dir.create(outputdir)
-        file.copy(newdata,od(casename))
+        ## TODO create md5 checksum for the data here
     }
 
     outputdir = normalizePath(outputdir)
     od = ip(outputdir) # now the normalized path exists.
     message("output dir is ",outputdir)
-    setwd(modeldir)
 
-    source("R/functions.R")
-
-    message("Stage 01")
-    source("R/01.R")
-    analysis01(outputdir, casefile=file.path(outputdir,casename))
-
-    message("Stage 02")
-    source("R/02.R")
-    analysis02(outputdir)
-
-    message("Stage 04")
-    source("R/04.R")
-    analysis04(outputdir)
+    stsmodel::launch(outputdir, linelist, unrestricted, restricted)
 
     message("making map")
     

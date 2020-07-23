@@ -32,13 +32,10 @@ mapdata <- function(map, exp,codename, namename, pf){
     map
 }
 
-exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
-#    stopifnot(all(mapdata$code == names(grobs)))
+exmap <- function(mapdata, plotfolder, last_day){
+
     overs = which(mapdata$exceed1)
     unders = which(mapdata$below1)
-
-#    overgrobs = grobs[overs]
-#    undergrobs = grobs[unders]
 
     w = options()$warn
     options(warn=-1) # prevent CRS warnings
@@ -75,14 +72,11 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
 
     ims = lapply(1:nrow(mapdata), function(im){
         md = mapdata[im,]
-        ip = file.path(imagefolder, paste0(md$code,".png"))
         fp = file.path(plotfolder, paste0(md$code,".html"))
-        iframe = paste0('<iframe style="border:none" width="800" height="450" src="',fp,'"></iframe><a target="_blank" href="',fp,'">popout</a>')
+        iframe = paste0('<iframe style="border:none" width="800" height="450" src="',fp,'"></iframe><a title="show in a new window" target="_blank" href="',fp,'">popout</a>')
         htmltools::HTML(iframe)
         })
     
-    imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))
-
     tag.map.title <- tags$style(HTML("
   .leaflet-control.map-title { 
     transform: translate(-50%,20%);

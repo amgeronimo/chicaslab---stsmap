@@ -77,7 +77,8 @@ exmap <- function(mapdata, grobs=0, imagefolder, plotfolder, last_day){
         md = mapdata[im,]
         ip = file.path(imagefolder, paste0(md$code,".png"))
         fp = file.path(plotfolder, paste0(md$code,".html"))
-        htmltools::HTML(paste0('<b>',md$name,'</b><br/><a href="',fp,'"><img src="',ip,'"></a><br/><a href="',fp,'">Interactive Plot</a>'))
+        iframe = paste0('<iframe style="border:none" width="800" height="450" src="',fp,'"></iframe><a target="_blank" href="',fp,'">popout</a>')
+        htmltools::HTML(iframe)
         })
     
     imagepaths = file.path(imagefolder, paste0(mapdata$lad19cd,".png"))
@@ -104,7 +105,7 @@ width: 10em;
     title <- tags$div(
                       tag.map.title, HTML(text)
                   )  
-    popopts = list(minWidth=350, maxWidth=350)
+    popopts = list(minWidth=850, maxWidth=850)
     M = leaflet() %>%
         addProviderTiles("Esri.WorldGrayCanvas")
     if(length(unders)>0){

@@ -55,17 +55,14 @@ make_plotly <- function(fits, preds){
 
     fig <- fig %>% add_ribbons(ymin=~low95, ymax=~up95,
                                legendgroup="Model",
-                               visible="legendonly",
                                line=list(color="transparent"),fillcolor='rgb(208,227,245)',
                                showlegend=TRUE, name="95% CI") # name doesn't show
     fig <- fig %>% add_ribbons(ymin=~low50, ymax=~up50,
                                legendgroup="Model",
-                               visible="legendonly",
                                line=list(color="transparent"),fillcolor='rgb(171,205,237)',
                                showlegend=TRUE, name="50% CI") # name doesn't show
     fig  <- fig %>% add_trace(y=~mean, type="scatter",mode="lines",
                               legendgroup="Model",
-                              visible="legendonly",
                               line=list(color="black"),
                               showlegend=TRUE,
                                fillcolor='rgba(100,100,80,.2)', name="Mean")

@@ -1,5 +1,5 @@
 "name","given","fullpath","mtime","md5"
 "cases","/data/covid19/PHE/PHE_2020-07-22/Anonymised Combined Line List 20200722.xlsx","/data/covid19/PHE/PHE_2020-07-22/Anonymised Combined Line List 20200722.xlsx",2020-07-22 21:41:00,"85db41b06744b14bed935458ca0ecf7a"
-"flows","./Data/Unrestricted/processed/mergedflows.rds","/app/Data/Unrestricted/processed/mergedflows.rds",2020-06-15 14:28:56,"2f34b018ac0995f8e9461f062a068004"
+"flows","/app/Data/Unrestricted/processed/mergedflows.rds","/app/Data/Unrestricted/processed/mergedflows.rds",2020-06-15 14:28:56,"2f34b018ac0995f8e9461f062a068004"
 "traffic","/data/covid19/DfT/2020-06-16/200616_COVID19_road_traffic_national_table.xlsx","/data/covid19/DfT/2020-06-16/200616_COVID19_road_traffic_national_table.xlsx",2020-06-17 16:34:54,"0491b7ac7d6fb9d515b73e1b08724404"
-"areas","./Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg","/app/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg",2020-06-22 08:51:34,"cf99fa0284c96852e73f588f6bb89110"
+"areas","/app/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg","/app/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg",2020-06-22 08:51:34,"cf99fa0284c96852e73f588f6bb89110"

@@ -1,5 +1,5 @@
 "name","given","fullpath","mtime","md5"
 "cases","/data/covid19/PHE/PHE_2020-10-02/Anonymised Combined Line List 20201002.csv","/data/covid19/PHE/PHE_2020-10-02/Anonymised Combined Line List 20201002.csv",2020-10-02 14:44:32,"db976be0adbed309e1afa3cf62e21cb9"
 "flows","/app/Data/Unrestricted/processed/mergedflows.rds","/app/Data/Unrestricted/processed/mergedflows.rds",2020-06-15 14:28:56,"2f34b018ac0995f8e9461f062a068004"
-"traffic","/data/covid19/Dft/2020-08-11/200811_OFF_SEN_COVID19_road_traffic_national_table.xlsx","/data/covid19/Dft/2020-08-11/200811_OFF_SEN_COVID19_road_traffic_national_table.xlsx",2020-08-18 17:46:41,"638a09948b30513220240f1d14ca46ca"
+"traffic","/data/covid19/Dft/2020-09-29/200929_OFF_SEN_COVID19_road_traffic_national_table.xlsx","/data/covid19/Dft/2020-09-29/200929_OFF_SEN_COVID19_road_traffic_national_table.xlsx",2020-10-03 06:49:07,"eed3f8db5f9faeb4705f7ea87041086f"
 "areas","/app/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg","/app/Data/Unrestricted/original/geodata/UK2019mod_pop.gpkg",2020-06-22 08:51:34,"cf99fa0284c96852e73f588f6bb89110"
